@@ -15,6 +15,7 @@ import urllib.request
 import urllib.parse
 import base64
 import codecs
+import webbrowser
 
 
 
@@ -31,7 +32,18 @@ def getToken():
     request = urllib.request.Request(final_url)
 
     data_from_server = urllib.request.urlopen(request).read()
-    return data_from_server
+    decoded = data_from_server.decode("utf8")
+
+    login_page  = open('login_page.html', 'w')
+    login_page.write(decoded)
+    login_page.close()
+
+    webbrowser.open_new_tab('login_page.html')
+    
+
+
+
+    return decoded
 
 
 
