@@ -11,7 +11,7 @@ import base64
 import urllib
 from urllib.parse import quote
 import json
-from db import db, User, Data
+from db import db, User, Data, Playlist, Track, Artist, Profile
 
 db_filename = "data.db"
 app = Flask(__name__)

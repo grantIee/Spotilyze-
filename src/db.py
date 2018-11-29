@@ -57,11 +57,12 @@ class Data(db.Model):
     userfavtrack = db.Column(db.String, nullable=True)
     """
     userid = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    spotifyid = db.Column(db.String, db.ForeignKey('user.spotify_id'), nullable=False)
+    #spotifyid = db.Column(db.String, db.ForeignKey('user.spotify_id'), nullable=False)
     playlists = db.relationship('Playlist', cascade='delete')
     profiles = db.relationship('Profile', cascade='delete')
     artists = db.relationship('Artist', cascade='delete')
     tracks = db.relationship('Track', cascade='delete')
+
     
 
     def __init__(self, **kwargs):
@@ -84,7 +85,7 @@ class Data(db.Model):
             """
             'userdataid': self.id,
             'userid': self.userid,
-            'spotifyid': self.spotifyid
+            #'spotifyid': self.spotifyid
         }
 
 class Playlist(db.Model):
@@ -92,7 +93,7 @@ class Playlist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=True)
     images = db.Column(db.String, nullable=True)
-    dataid = db.Column(db.Integer, db.ForeignKey('datas.userid'), nullable=False)
+    dataid = db.Column(db.Integer, db.ForeignKey('datas.id'), nullable=False)
 
     def __init__(self, **kwargs):
         self.name = kwargs.get('name', '')
@@ -114,7 +115,7 @@ class Profile(db.Model):
     #userprof = db.Column(db.String, nullable=True)
     display_name = db.Column(db.String, nullable=True)
     images = db.Column(db.String, nullable=True)
-    dataid = db.Column(db.Integer, db.ForeignKey('datas.userid'), nullable=False)
+    dataid = db.Column(db.Integer, db.ForeignKey('datas.id'), nullable=False)
 
     def __init__(self, **kwargs):
         self.userprof = kwargs.get('user_profile', '')
@@ -136,7 +137,7 @@ class Artist(db.Model):
     name = db.Column(db.String, nullable=True)
     images = db.Column(db.String, nullable=True)
     genres = db.Column(db.String, nullable=True)
-    dataid = db.Column(db.Integer, db.ForeignKey('datas.userid'), nullable=False)
+    dataid = db.Column(db.Integer, db.ForeignKey('datas.id'), nullable=False)
 
     def __init__(self, **kwargs):
         self.name = kwargs.get('artist name', '')
@@ -158,7 +159,7 @@ class Track(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=True)
     url = db.Column(db.String, nullable=True)
-    dataid = db.Column(db.Integer, db.ForeignKey('datas.userid'), nullable=False)
+    dataid = db.Column(db.Integer, db.ForeignKey('datas.id'), nullable=False)
 
     def __init__(self, **kwargs):
         self.name = kwargs.get('track name', '')
@@ -173,4 +174,6 @@ class Track(db.Model):
             'track url': self.url,
             'data id': self.dataid
         }
+
+
 
