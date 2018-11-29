@@ -35,8 +35,10 @@ db = SQLAlchemy()
 class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
+    spotify_id = db.Column(db.String, nullable=False)
     datas = db.relationship('Data', cascade='delete')
     def __init__(self, **kwargs):
+        self.spotify_id = kwargs.get('spotify_id', '')
         #self.items = kwargs.get('items', '')
 
     def serialize(self):

@@ -57,9 +57,6 @@ def index():
 
 @app.route("/callback/q")
 def callback():
-    print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
-    print(request)
-    print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
 
     auth_token = request.args['code']
 
@@ -95,6 +92,15 @@ def callback():
     user_profile_api_endpoint = "{}/me".format(SPOTIFY_API_URL)
     profile_response = requests.get(user_profile_api_endpoint, headers=authorization_header)
     profile_data = json.loads(profile_response.text)
+    spotify_id = profile_data.get('id')
+    user = User.query.filter_by(spotify_id = spotify_id).first()
+    if user is not None:
+        # Check that the last time it was refreshed was within 1 week
+        return 
+    
+
+    db.session.add(user)
+
 
     # Retrieve Playlist Data
     playlist_api_endpoint = "{}/playlists".format(profile_data["href"])
