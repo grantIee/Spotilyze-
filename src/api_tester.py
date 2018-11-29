@@ -123,6 +123,7 @@ def callback():
     # Compile Final User Data
     final_user_data = json.dumps({'user_profile': profile_data, 'playlist_data': playlist_data, 'favorite_artists_data': favorite_artists_data, 'favorite_tracks_data': favorite_tracks_data})
 
+    db.session.commit()
     return final_user_data
 
 if __name__ == "__main__":
