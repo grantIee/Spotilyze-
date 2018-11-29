@@ -11,7 +11,7 @@ import base64
 import urllib
 from urllib.parse import quote
 import json
-from db import db, User, data
+from db import db, User, Data
 
 db_filename = "data.db"
 app = Flask(__name__)
@@ -97,10 +97,12 @@ def callback():
     if user is not None:
         # Check that the last time it was refreshed was within 1 week
         return 
-    
-
-    db.session.add(user)
-
+        # If not in the db, make a new entry
+    else:
+        user_entry = User(
+            spotify_id = spotify_id
+        )
+        db.session.add(user_entry)
 
     # Retrieve Playlist Data
     playlist_api_endpoint = "{}/playlists".format(profile_data["href"])
@@ -108,12 +110,14 @@ def callback():
     playlist_data = json.loads(playlists_response.text)
     db.session.add(pla)
 
-    # Retrieve Favorite Data
+    # Retrieve Favorite Tracks
     favorite_tracks_api_endpoint = "{}/me/top/{}?time_range=medium_term".format(SPOTIFY_API_URL, "tracks")
-    favorite_artists_api_endpoint = "{}/me/top/{}?time_range=medium_term".format(SPOTIFY_API_URL, "artists")
     favorite_tracks_response = requests.get(favorite_tracks_api_endpoint, headers=authorization_header)
-    favorite_artists_response = requests.get(favorite_artists_api_endpoint, headers=authorization_header)
     favorite_tracks_data = json.loads(favorite_tracks_response.text)
+    
+    # Retrieve Favorite Artists
+    favorite_artists_api_endpoint = "{}/me/top/{}?time_range=medium_term".format(SPOTIFY_API_URL, "artists")
+    favorite_artists_response = requests.get(favorite_artists_api_endpoint, headers=authorization_header)
     favorite_artists_data = json.loads(favorite_artists_response.text)
 
     # Compile Final User Data
