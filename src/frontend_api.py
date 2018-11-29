@@ -1,4 +1,4 @@
-from flask import FLask, request
+from flask import Flask, request
 import json
 from db import db, User, Data
 
@@ -9,10 +9,24 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///%s' %db_filename
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 
+db.init_app(app)
+
+CLIENT_SIDE_URL = "http://127.0.0.1"
+PORT = 8080
+
 @app.route('/')
 
+
+# Get the list of users in db
+@app.route('/api/users')
+def get_users():
+    users = User.query.all()
+    res = {'success': True, 'data': [user.serialize() for user in users]}
+    return json.dumps(res), 200
+
+
 #Get a specific user's data
-@app.route('/api/post/<int: id>/datas/')
+@app.route('/api/post/<int:spotify_id>/datas/')
 def get_userdata(id):
     data = User.query.filter_by(id=id).first()
     if data is not None:
@@ -23,8 +37,8 @@ def get_userdata(id):
 
 
 #Get a specific user's profile
-@app.route('/api/post/<int: id>/data/user_profile/')
-def get_userdata(id):
+@app.route('/api/post/<int:spotify_id>/data/user_profile/')
+def get_user_profile(id):
     data = User.query.filter_by(id=id).first()
     if data is not None:
         datas = [data.serialize() for data in user.datas]
@@ -34,8 +48,8 @@ def get_userdata(id):
         return json.dumps({"error": "Post not found..."}), 404    
 
 #Get a specific user's playlists
-@app.route('/api/post/<int: id>/data/user_playlists/')
-def get_userdata(id):
+@app.route('/api/post/<int:spotify_id>/data/user_playlists/')
+def get_user_playlists(id):
     data = User.query.filter_by(id=id).first()
     if data is not None:
         datas = [data.serialize() for data in user.datas]
@@ -46,8 +60,8 @@ def get_userdata(id):
 
 
 #Get a specific user's favorite artists
-@app.route('/api/post/<int: id>/data/user_favorite_artists/')
-def get_userdata(id):
+@app.route('/api/post/<int:spotify_id>/data/user_favorite_artists/')
+def get_user_favorite_artists(id):
     data = User.query.filter_by(id=id).first()
     if data is not None:
         datas = [data.serialize() for data in user.datas]
@@ -57,8 +71,8 @@ def get_userdata(id):
         return json.dumps({"error": "Post not found..."}), 404    
 
 #Get a specific user's favorite tracks
-@app.route('/api/post/<int: id>/data/user_favorite_tracks/')
-def get_userdata(id):
+@app.route('/api/post/<int:spotify_id>/data/user_favorite_tracks/')
+def get_user_favorite_tracks(id):
     data = User.query.filter_by(id=id).first()
     if data is not None:
         datas = [data.serialize() for data in user.datas]
@@ -67,4 +81,5 @@ def get_userdata(id):
     else:
         return json.dumps({"error": "Post not found..."}), 404    
 
-
+if __name__ == "__main__":
+    app.run(debug=True,port=PORT)

@@ -43,7 +43,7 @@ class User(db.Model):
 
     def serialize(self):
         return {
-            'userid': self.id;
+            'userid': self.id
         }
 
 class Data(db.Model):
