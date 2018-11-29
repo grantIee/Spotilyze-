@@ -28,7 +28,8 @@ def get_userdata(id):
     data = User.query.filter_by(id=id).first()
     if data is not None:
         datas = [data.serialize() for data in user.datas]
-        return json.dumps({"data": datas}), 200
+        profile = datas[0]['user profile']
+        return json.dumps({"profile": profile}), 200
     else:
         return json.dumps({"error": "Post not found..."}), 404    
 
@@ -38,8 +39,8 @@ def get_userdata(id):
     data = User.query.filter_by(id=id).first()
     if data is not None:
         datas = [data.serialize() for data in user.datas]
-        playlists = datas[0]['']
-        return json.dumps({"data": datas}), 200
+        playlists = datas[0]['user playlists']
+        return json.dumps({"playlist": playlists}), 200
     else:
         return json.dumps({"error": "Post not found..."}), 404    
 
@@ -50,7 +51,8 @@ def get_userdata(id):
     data = User.query.filter_by(id=id).first()
     if data is not None:
         datas = [data.serialize() for data in user.datas]
-        return json.dumps({"data": datas}), 200
+        artists = datas[0]['user favorite artists']
+        return json.dumps({"favorite artists": artists}), 200
     else:
         return json.dumps({"error": "Post not found..."}), 404    
 
@@ -60,7 +62,8 @@ def get_userdata(id):
     data = User.query.filter_by(id=id).first()
     if data is not None:
         datas = [data.serialize() for data in user.datas]
-        return json.dumps({"data": datas}), 200
+        tracks = datas[0]['user favorite tracks']
+        return json.dumps({"favorite tracks": tracks}), 200
     else:
         return json.dumps({"error": "Post not found..."}), 404    
 
