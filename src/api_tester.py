@@ -108,16 +108,26 @@ def callback():
     playlist_api_endpoint = "{}/playlists".format(profile_data["href"])
     playlists_response = requests.get(playlist_api_endpoint, headers=authorization_header)
     playlist_data = json.loads(playlists_response.text)
-    user.datas.playlists.append(playlist_data)
-    db.session.add(playlist_data)
+    pdata = Playlist(
+        name = playlist_data.get('items')[0].get('name'),
+        images = playlist_data.get('items')[0].get('images'),
+        dataid = user.id
+    )
+    user.datas.playlists.append(pdata)
+    db.session.add(pdata)
     db.session.commit()
 
     # Retrieve Favorite Tracks
     favorite_tracks_api_endpoint = "{}/me/top/{}?time_range=medium_term".format(SPOTIFY_API_URL, "tracks")
     favorite_tracks_response = requests.get(favorite_tracks_api_endpoint, headers=authorization_header)
     favorite_tracks_data = json.loads(favorite_tracks_response.text)
-    user.datas.tracks.append(favorite_tracks_data)
-    db.session.add(favorite_tracks_data)
+    favtrackdata = Track(
+        name = favorite_tracks_data.get('items')[0].get('name'),
+        url = favorite_tracks_data.get('items')[0].get('url'),
+        dataid = user.id
+    )
+    user.datas.tracks.append(favtrackdata)
+    db.session.add(favtrackdata)
     db.session.commit()
 
     # Retrieve Favorite Artists

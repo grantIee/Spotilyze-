@@ -95,8 +95,9 @@ class Playlist(db.Model):
     dataid = db.Column(db.Integer, db.ForeignKey('datas.userid'), nullable=False)
 
     def __init__(self, **kwargs):
-        self.userplay = kwargs.get('user_playlists', '')
-        self.userid = kwargs.get('dataid')
+        self.name = kwargs.get('name', '')
+        self.images = kwargs.get('images', '')
+        self.dataid = kwargs.get('dataid')
 
 
     def serialize(self):
