@@ -108,13 +108,18 @@ def callback():
     playlist_api_endpoint = "{}/playlists".format(profile_data["href"])
     playlists_response = requests.get(playlist_api_endpoint, headers=authorization_header)
     playlist_data = json.loads(playlists_response.text)
-    db.session.add(pla)
+    user.datas.playlists.append(playlist_data)
+    db.session.add(playlist_data)
+    db.session.commit()
 
     # Retrieve Favorite Tracks
     favorite_tracks_api_endpoint = "{}/me/top/{}?time_range=medium_term".format(SPOTIFY_API_URL, "tracks")
     favorite_tracks_response = requests.get(favorite_tracks_api_endpoint, headers=authorization_header)
     favorite_tracks_data = json.loads(favorite_tracks_response.text)
-    
+    user.datas.tracks.append(favorite_tracks_data)
+    db.session.add(favorite_tracks_data)
+    db.session.commit()
+
     # Retrieve Favorite Artists
     favorite_artists_api_endpoint = "{}/me/top/{}?time_range=medium_term".format(SPOTIFY_API_URL, "artists")
     favorite_artists_response = requests.get(favorite_artists_api_endpoint, headers=authorization_header)
