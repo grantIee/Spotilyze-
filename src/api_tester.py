@@ -11,7 +11,9 @@ import base64
 import urllib
 from urllib.parse import quote
 import json
+from db import db, User, data
 
+db_filename = "data.db"
 app = Flask(__name__)
 
 #  Client Key (Be sure to leave these out)
@@ -31,6 +33,15 @@ REDIRECT_URI = "{}:{}/callback/q".format(CLIENT_SIDE_URL, PORT)
 SCOPE = "user-follow-read user-top-read user-read-private playlist-read-collaborative"
 SHOW_DIALOG_bool = True
 SHOW_DIALOG_str = str(SHOW_DIALOG_bool).lower()
+
+#SQLALC database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///%s' %db_filename
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ECHO'] = True
+
+db.init_app(app)
+with app.app_context():
+  db.create_all()
 
 # Get authenticated 
 @app.route("/")

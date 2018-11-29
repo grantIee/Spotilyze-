@@ -34,7 +34,6 @@ SCOPE = "user-follow-read user-top-read user-read-private playlist-read-collabor
 SHOW_DIALOG_bool = True
 SHOW_DIALOG_str = str(SHOW_DIALOG_bool).lower()
 
-
 #SQLALC database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///%s' %db_filename
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -74,7 +73,7 @@ def callback():
     }
 
     # Client Info Construction
-
+    
     # This constructs the information that authenticates the Client
     client_info = CLIENT_ID + ':' + CLIENT_SECRET
     client_info_bytes = client_info.encode('utf-8')
