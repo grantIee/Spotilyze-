@@ -51,14 +51,14 @@ class Data(db.Model):
     userplay = db.Column(db.String, nullable=True)
     userfavartist = db.Column(db.String, nullable=True)
     userfavtrack = db.Column(db.String, nullable=True)
-    postid = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    userid = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __init__(self, **kwargs):
         self.userprof = kwargs.get('user_profile', '')
         self.userplay = kwargs.get('user_playlists', '')
         self.userfavartist = kwargs.get('user_favorite_artists', '')
         self.userfavtrack = kwargs.get('user_favorite_tracks', '')
-        self.postid = kwargs.get('postid')
+        self.userid = kwargs.get('userid')
 
     def serialize(self):
         return {
