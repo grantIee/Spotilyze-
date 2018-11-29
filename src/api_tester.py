@@ -91,31 +91,28 @@ def callback():
     # Authorization_header that uses all parts
     authorization_header = {"Authorization":"Bearer {}".format(access_token)}
     
-    return authorization_header
+    # Retrieve User Profile
+    user_profile_api_endpoint = "{}/me".format(SPOTIFY_API_URL)
+    profile_response = requests.get(user_profile_api_endpoint, headers=authorization_header)
+    profile_data = json.loads(profile_response.text)
 
-    @app.route("/user_profile")
-    def user_profile(authorization_header):
-        user_profile_api_endpoint = "{}/me".format(SPOTIFY_API_URL)
-        profile_response = requests.get(user_profile_api_endpoint, headers=authorization_header)
-        profile_data = json.loads(profile_response.text)
-        return profile_data
+    # Retrieve Playlist Data
+    playlist_api_endpoint = "{}/playlists".format(profile_data["href"])
+    playlists_response = requests.get(playlist_api_endpoint, headers=authorization_header)
+    playlist_data = json.loads(playlists_response.text)
 
-    @app.route("/user_playlists")
-    def user_playlists(authorization_header):
-        playlist_api_endpoint = "{}/playlists".format(profile_data["href"])
-        playlists_response = requests.get(playlist_api_endpoint, headers=authorization_header)
-        playlist_data = json.loads(playlists_response.text)
-        return playlist_data
+    # Retrieve Favorite Data
+    favorite_tracks_api_endpoint = "{}/me/top/{}?time_range=medium_term".format(SPOTIFY_API_URL, "tracks")
+    favorite_artists_api_endpoint = "{}/me/top/{}?time_range=medium_term".format(SPOTIFY_API_URL, "artists")
+    favorite_tracks_response = requests.get(favorite_tracks_api_endpoint, headers=authorization_header)
+    favorite_artists_response = requests.get(favorite_artists_api_endpoint, headers=authorization_header)
+    favorite_tracks_data = json.loads(favorite_tracks_response.text)
+    favorite_artists_data = json.loads(favorite_artists_response.text)
 
-    @app.route("/user_favorites")
-    def user_favorites(authorization_header):
-        favorite_tracks_api_endpoint = "{}/me/top/{}".format(SPOTIFY_API_BASE_URL, "tracks")
-        favorite_artists_api_endpoint = "{}/me/top/{}".format(SPOTIFY_API_BASE_URL, "artists")
-        favorite_tracks_response = requests.get(favorite_tracks_api_endpoint, headers=authorization_header)
-        favorite_artists_response = requests.get(favorite_artists_api_endpoint, headers=authorization_header)
-        favorite_tracks_data = json.loads(favorite_tracks_response.text)
-        favorite_artists_data = json.loads(favorite_artists_response.text)
-        return favorite_tracks_data
+    # Compile Final User Data
+    final_user_data = json.dumps({'user_profile': profile_data, 'playlist_data': playlist_data, 'favorite_artists_data': favorite_artists_data, 'favorite_tracks_data': favorite_tracks_data})
+
+    return final_user_data
 
 if __name__ == "__main__":
     app.run(debug=True,port=PORT)
