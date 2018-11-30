@@ -11,14 +11,16 @@ import base64
 import urllib
 from urllib.parse import quote
 import json
-from db import db, User, Data
+from db2 import db, User, Data
+import time
+import datetime
 
 db_filename = "data.db"
 app = Flask(__name__)
 
 #  Client Key (Be sure to leave these out)
 CLIENT_ID = 'a9c19b55cef14742aba314f3d27ae7d5'
-CLIENT_SECRET = '8e540d477c1e4e52b5c41d8383b14d6d'
+CLIENT_SECRET = '46a536eb74a14a3b94b70650d02a2db4'
 
 # Spotify URLS (Request url materials)
 SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
@@ -33,6 +35,7 @@ REDIRECT_URI = "{}:{}/callback/q".format(CLIENT_SIDE_URL, PORT)
 SCOPE = "user-follow-read user-top-read user-read-private playlist-read-collaborative"
 SHOW_DIALOG_bool = True
 SHOW_DIALOG_str = str(SHOW_DIALOG_bool).lower()
+USER_ID = 10
 
 #SQLALC database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///%s' %db_filename
@@ -90,41 +93,97 @@ def callback():
     
     # Retrieve User Profile
     user_profile_api_endpoint = "{}/me".format(SPOTIFY_API_URL)
-    profile_response = requests.get(user_profile_api_endpoint, headers=authorization_header)
-    profile_data = json.loads(profile_response.text)
-    spotify_id = profile_data.get('id')
+    user_profile_response = requests.get(user_profile_api_endpoint, headers=authorization_header)
+    user_profile_data = json.loads(user_profile_response.text)
+
+    # Info needed beforehand
+    datetime_current = datetime.datetime.now()
+    spotify_id = user_profile_data.get('id')
     user = User.query.filter_by(spotify_id = spotify_id).first()
+
+    # Check that user is already in the system or not
     if user is not None:
         # Check that the last time it was refreshed was within 1 week
-        return 
-        # If not in the db, make a new entry
+        last_refreshed_date = user.date_last_refreshed
+        if datetime_current - last_refreshed_date < datetime.timedelta(days=7):
+            return json.dumps({'success': False, 'error': 'user has been refreshed within the past week'}), 429
     else:
-        user_entry = User(
-            spotify_id = spotify_id
+        # If not in the db, make a new entry
+        user_entry = User (
+            spotify_id = spotify_id,
+            date_last_refreshed = datetime_current
         )
         db.session.add(user_entry)
+        db.session.commit()
+
+    # User should now be defined either way
+    user = User.query.filter_by(spotify_id = spotify_id).first()
 
     # Retrieve Playlist Data
-    playlist_api_endpoint = "{}/playlists".format(profile_data["href"])
-    playlists_response = requests.get(playlist_api_endpoint, headers=authorization_header)
-    playlist_data = json.loads(playlists_response.text)
-    db.session.add(pla)
+    user_playlists_api_endpoint = "{}/playlists".format(user_profile_data["href"])
+    user_playlists_response = requests.get(user_playlists_api_endpoint, headers=authorization_header)
+    user_playlists_data = json.loads(user_playlists_response.text)
 
-    # Retrieve Favorite Tracks
-    favorite_tracks_api_endpoint = "{}/me/top/{}?time_range=medium_term".format(SPOTIFY_API_URL, "tracks")
-    favorite_tracks_response = requests.get(favorite_tracks_api_endpoint, headers=authorization_header)
-    favorite_tracks_data = json.loads(favorite_tracks_response.text)
+    # Retrieve Favorite Tracks: Short_Term
+    favorite_tracks_short_api_endpoint = "{}/me/top/{}?time_range=short_term".format(SPOTIFY_API_URL, "tracks")
+    favorite_tracks_short_response = requests.get(favorite_tracks_short_api_endpoint, headers=authorization_header)
+    favorite_tracks_short_data = json.loads(favorite_tracks_short_response.text)
     
-    # Retrieve Favorite Artists
-    favorite_artists_api_endpoint = "{}/me/top/{}?time_range=medium_term".format(SPOTIFY_API_URL, "artists")
-    favorite_artists_response = requests.get(favorite_artists_api_endpoint, headers=authorization_header)
-    favorite_artists_data = json.loads(favorite_artists_response.text)
+    # Retrieve Favorite Tracks: Medium_Term
+    favorite_tracks_mid_api_endpoint = "{}/me/top/{}?time_range=medium_term".format(SPOTIFY_API_URL, "tracks")
+    favorite_tracks_mid_response = requests.get(favorite_tracks_mid_api_endpoint, headers=authorization_header)
+    favorite_tracks_mid_data = json.loads(favorite_tracks_mid_response.text)
 
-    # Compile Final User Data
-    final_user_data = json.dumps({'user_profile': profile_data, 'playlist_data': playlist_data, 'favorite_artists_data': favorite_artists_data, 'favorite_tracks_data': favorite_tracks_data})
+    # Retrieve Favorite Tracks: Long_Term
+    favorite_tracks_long_api_endpoint = "{}/me/top/{}?time_range=long_term".format(SPOTIFY_API_URL, "tracks")
+    favorite_tracks_long_response = requests.get(favorite_tracks_long_api_endpoint, headers=authorization_header)
+    favorite_tracks_long_data = json.loads(favorite_tracks_long_response.text)
 
+    # Retrieve Favorite Artists: Short_Term
+    favorite_artists_short_api_endpoint = "{}/me/top/{}?time_range=short_term".format(SPOTIFY_API_URL, "artists")
+    favorite_artists_short_response = requests.get(favorite_tracks_short_api_endpoint, headers=authorization_header)
+    favorite_artists_short_data = json.loads(favorite_tracks_short_response.text)
+    
+    # Retrieve Favorite Artists: Medium_Term
+    favorite_artists_mid_api_endpoint = "{}/me/top/{}?time_range=medium_term".format(SPOTIFY_API_URL, "artists")
+    favorite_artists_mid_response = requests.get(favorite_tracks_mid_api_endpoint, headers=authorization_header)
+    favorite_artists_mid_data = json.loads(favorite_tracks_mid_response.text)
+
+    # Retrieve Favorite Artists: Long_Term
+    favorite_artists_long_api_endpoint = "{}/me/top/{}?time_range=long_term".format(SPOTIFY_API_URL, "artists")
+    favorite_artists_long_response = requests.get(favorite_tracks_long_api_endpoint, headers=authorization_header)
+    favorite_artists_long_data = json.loads(favorite_tracks_long_response.text)
+
+    user_data_entry = Data (
+        user_top_artists_short = str(favorite_artists_short_data),
+        user_top_artists_mid = str(favorite_artists_mid_data),
+        user_top_artists_long = str(favorite_artists_long_data),
+        user_top_tracks_short = str(favorite_tracks_short_data),
+        user_top_tracks_mid = str(favorite_tracks_mid_data),
+        user_top_tracks_long = str(favorite_tracks_long_data),
+        user_profile = str(user_profile_data),
+        user_playlists = str(user_playlists_data)
+    )
+
+    user.user_data.clear()
+    user.user_data.append(user_data_entry)
+    db.session.add(user_data_entry)
+
+    final_json = json.dumps({'user_profile_data': user_profile_data,
+                             'user_playlists_data': user_playlists_data,
+                             'favorite_artists_short': favorite_artists_short_data, 
+                             'favorite_artists_mid': favorite_artists_mid_data,
+                             'favorite_artists_long': favorite_artists_long_data, 
+                             'favorite_tracks_short': favorite_tracks_short_data,  
+                             'favorite_tracks_mid': favorite_tracks_mid_data,
+                             'favorite_tracks_long': favorite_tracks_long_data})
+
+    # Commit all adds to db
     db.session.commit()
-    return final_user_data
+
+    return json.dumps({'success': True, 'data': final_json}), 201
+
+    
 
 if __name__ == "__main__":
     app.run(debug=True,port=PORT)

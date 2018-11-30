@@ -57,7 +57,6 @@ class Data(db.Model):
     userfavtrack = db.Column(db.String, nullable=True)
     """
     userid = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    spotifyid = db.Column(db.String, db.ForeignKey('user.spotify_id'), nullable=False)
     playlists = db.relationship('Playlist', cascade='delete')
     profiles = db.relationship('Profile', cascade='delete')
     artists = db.relationship('Artist', cascade='delete')
@@ -135,13 +134,19 @@ class Artist(db.Model):
     name = db.Column(db.String, nullable=True)
     images = db.Column(db.String, nullable=True)
     genres = db.Column(db.String, nullable=True)
+    popularity = db.Column(db.Integer, nullable=True)
+    followers = db.Column(db.Integer, nullable=True)
+    profile_url = db.Column(db.String, nullable=True)
     dataid = db.Column(db.Integer, db.ForeignKey('datas.userid'), nullable=False)
 
     def __init__(self, **kwargs):
-        self.name = kwargs.get('artist name', '')
-        self.images = kwargs.get('artist images', '')
-        self.genres = kwargs.get('artist genres', '')
-        self.dataid = kwargs.get('dataid')
+        self.name = kwargs.get('artist_name', '')
+        self.images = kwargs.get('artist_images', '')
+        self.genres = kwargs.get('artist_genres', '')
+        self.popularity = kwargs.get('artist_popularities', '')
+        self.followers = kwargs.get('artist_followers', '')
+        self.profile_url = kwargs.get('artist_url', '')
+        self.dataid = kwargs.get('dataid', '')
 
     def serialize(self):
         return {
