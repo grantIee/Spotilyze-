@@ -11,9 +11,13 @@ import base64
 import urllib
 from urllib.parse import quote
 import json
+<<<<<<< HEAD
 from db2 import db, User, Data
 import time
 import datetime
+=======
+from db import db, User, Data, Playlist, Track, Artist, Profile
+>>>>>>> 569692591f23bf16ec4577bef3f420fe2761ad5d
 
 db_filename = "data.db"
 app = Flask(__name__)
@@ -169,14 +173,14 @@ def callback():
     user.user_data.append(user_data_entry)
     db.session.add(user_data_entry)
 
-    final_json = json.dumps({'user_profile_data': user_profile_data,
-                             'user_playlists_data': user_playlists_data,
-                             'favorite_artists_short': favorite_artists_short_data, 
-                             'favorite_artists_mid': favorite_artists_mid_data,
-                             'favorite_artists_long': favorite_artists_long_data, 
-                             'favorite_tracks_short': favorite_tracks_short_data,  
-                             'favorite_tracks_mid': favorite_tracks_mid_data,
-                             'favorite_tracks_long': favorite_tracks_long_data})
+    final_json = json.dumps({'user_profile_data': str(user_profile_data),
+                             'user_playlists_data': str(user_playlists_data),
+                             'favorite_artists_short': str(favorite_artists_short_data), 
+                             'favorite_artists_mid': str(favorite_artists_mid_data),
+                             'favorite_artists_long': str(favorite_artists_long_data), 
+                             'favorite_tracks_short': str(favorite_tracks_short_data),  
+                             'favorite_tracks_mid': str(favorite_tracks_mid_data),
+                             'favorite_tracks_long': str(favorite_tracks_long_data)})
 
     # Commit all adds to db
     db.session.commit()
