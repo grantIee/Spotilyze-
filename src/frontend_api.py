@@ -26,7 +26,7 @@ def get_users():
 
 
 #Get a specific user's data
-@app.route('/api/post/<int:spotify_id>/datas/')
+@app.route('/api/user/<int:spotify_id>/datas/')
 def get_userdata(id):
     data = User.query.filter_by(id=id).first()
     if data is not None:
@@ -35,20 +35,20 @@ def get_userdata(id):
     else:
         return json.dumps({"error": "Post not found..."}), 404    
 
-
+"""
 #Get a specific user's profile
-@app.route('/api/post/<int:spotify_id>/data/user_profile/')
+@app.route('/api/user/<int:spotify_id>/datas/profiles/')
 def get_user_profile(id):
-    data = User.query.filter_by(id=id).first()
+    data = Data.query.filter_by(id=id).first()
     if data is not None:
-        datas = [data.serialize() for data in user.datas]
+        datas = [data.serialize() for data in 
         profile = datas[0]['user profile']
         return json.dumps({"profile": profile}), 200
     else:
         return json.dumps({"error": "Post not found..."}), 404    
 
 #Get a specific user's playlists
-@app.route('/api/post/<int:spotify_id>/data/user_playlists/')
+@app.route('/api/post/<int:spotify_id>/datas/<int: id>/user_playlists/')
 def get_user_playlists(id):
     data = User.query.filter_by(id=id).first()
     if data is not None:
@@ -80,6 +80,6 @@ def get_user_favorite_tracks(id):
         return json.dumps({"favorite tracks": tracks}), 200
     else:
         return json.dumps({"error": "Post not found..."}), 404    
-
+"""
 if __name__ == "__main__":
     app.run(debug=True,port=PORT)

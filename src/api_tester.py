@@ -18,7 +18,8 @@ app = Flask(__name__)
 
 #  Client Key (Be sure to leave these out)
 CLIENT_ID = 'a9c19b55cef14742aba314f3d27ae7d5'
-CLIENT_SECRET = '8e540d477c1e4e52b5c41d8383b14d6d'
+CLIENT_SECRET = '46a536eb74a14a3b94b70650d02a2db4'
+
 
 # Spotify URLS (Request url materials)
 SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
@@ -96,7 +97,7 @@ def callback():
     user = User.query.filter_by(spotify_id = spotify_id).first()
     if user is not None:
         # Check that the last time it was refreshed was within 1 week
-        return 
+        print("YOLO")
         # If not in the db, make a new entry
     else:
         user_entry = User(
@@ -108,26 +109,59 @@ def callback():
     playlist_api_endpoint = "{}/playlists".format(profile_data["href"])
     playlists_response = requests.get(playlist_api_endpoint, headers=authorization_header)
     playlist_data = json.loads(playlists_response.text)
+    ndata = playlist_data.get('items')
+    idata = playlist_data.get('items')
+    ddata = playlist_data.get('items')
+    if ndata != []:
+        ndata = ndata[0].get('name')
+        idata = idata[0].get('images')
+        ddata = user.id
+    else:
+        ndata = "User has no data"
+        idata = "user has no data"
+        ddata = -1
+
+
     pdata = Playlist(
-        name = playlist_data.get('items')[0].get('name'),
-        images = playlist_data.get('items')[0].get('images'),
-        dataid = user.id
+        name = ndata,
+        images = idata,
+        dataid = ddata
     )
-    user.datas.playlists.append(pdata)
-    db.session.add(pdata)
+    if ddata != -1:
+        user.datas.playlists.append(pdata)
+        db.session.add(pdata)
     db.session.commit()
 
     # Retrieve Favorite Tracks
     favorite_tracks_api_endpoint = "{}/me/top/{}?time_range=medium_term".format(SPOTIFY_API_URL, "tracks")
     favorite_tracks_response = requests.get(favorite_tracks_api_endpoint, headers=authorization_header)
     favorite_tracks_data = json.loads(favorite_tracks_response.text)
+    #print(favorite_tracks_data)
+    ndata =  favorite_tracks_data.get('items')[0].get('album')
+    idata = favorite_tracks_data.get('items')[0].get('album')
+    ddata = playlist_data.get('items')
+    if ndata != []:
+        ndata = ndata.get('name')
+        idata = idata.get('url')
+        ddata = user.id
+    else:
+        ndata = "User has no data"
+        idata = "user has no data"
+        ddata = -1
+
+
     favtrackdata = Track(
-        name = favorite_tracks_data.get('items')[0].get('name'),
-        url = favorite_tracks_data.get('items')[0].get('url'),
-        dataid = user.id
+        name = ndata,
+        url = idata,
+        dataid = ddata
     )
-    user.datas.tracks.append(favtrackdata)
-    db.session.add(favtrackdata)
+
+    if ddata != -1:
+        #user.tracks.append(favtrackdata)
+        user.datas.
+        get("favorite_tracks_data").get("items").add(favtarckdata)
+        print(user.datas)
+        db.session.add(favtrackdata)
     db.session.commit()
 
     # Retrieve Favorite Artists
