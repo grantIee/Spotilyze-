@@ -1,6 +1,6 @@
 '''
     api.py
-    Grant Lee & Richard Yoon
+    Grant Lee & Jaemok Yoon
 
     Code that retrieves information on authenticated Spotify User
 '''

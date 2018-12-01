@@ -1,3 +1,9 @@
+'''
+    frontend_api.py
+    Grant Lee & Jaemok Yoon
+
+    Code that returns the user's information to the frontend. 
+'''
 from flask import Flask, request
 import json
 from db2 import db, User, Data
