@@ -133,4 +133,4 @@ def get_user_top_tracks_short(spotify_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True,port=PORT)
+    app.run(host=CLIENT_HOST, port=PORT, debug=True)
