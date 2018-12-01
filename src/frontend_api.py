@@ -6,7 +6,7 @@
 '''
 from flask import Flask, request
 import json
-from db2 import db, User, Data
+from db import db, User, Data
 
 db_filename = "data.db"
 app = Flask(__name__)

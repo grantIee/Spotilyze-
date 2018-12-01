@@ -11,7 +11,7 @@ import base64
 import urllib
 from urllib.parse import quote
 import json
-from db2 import db, User, Data
+from db import db, User, Data
 import time
 import datetime
 

@@ -1,182 +1,67 @@
 '''
-
-    db.py
-    Grant Lee & Richard Yoon
+    db2.py
+    Grant Lee & Jaemok Yoon
 
     Database structure for Spotilyze API
 '''
-"""
-class Track(db.Model):
-    __tablename__ = 'track'
-    id = db.Column(db.Integer, primary_key = True)
-    
-    
-
-
-class User(db.Model):
-    __tablename__ = 'user'
-
-
-class Album(db.Model):
-    __tablename__ = 'album'
-
-
-class Playlist(db.Model):
-    __tablename__ = 'playlist'
-
-
-class Artist(db.Model):
-    __tablename__ = 'artist'
-    
-"""
-
 from flask_sqlalchemy import SQLAlchemy 
+
 db = SQLAlchemy()
+
 class User(db.Model):
     __tablename__ = 'user'
+
     id = db.Column(db.Integer, primary_key=True)
     spotify_id = db.Column(db.String, nullable=False)
-    datas = db.relationship('Data', cascade='delete')
+    date_last_refreshed = db.Column(db.DateTime, nullable=False)
+    user_data = db.relationship('Data', cascade='delete')
+    
+
     def __init__(self, **kwargs):
         self.spotify_id = kwargs.get('spotify_id', '')
-        #self.items = kwargs.get('items', '')
+        self.date_last_refreshed = kwargs.get('date_last_refreshed', '')
 
     def serialize(self):
         return {
-            'userid': self.id,
-            'spotifyid': self.spotify_id
+            'user_id': self.id,
+            'spotify_id': self.spotify_id,
+            'date_last_refreshed': str(self.date_last_refreshed),
         }
 
 class Data(db.Model):
-    __tablename__ = 'datas'
+    __tablename__ = 'data'
+
     id = db.Column(db.Integer, primary_key=True)
-    """
-    userprof = db.Column(db.String, nullable=True)
-    userplay = db.Column(db.String, nullable=True)
-    userfavartist = db.Column(db.String, nullable=True)
-    userfavtrack = db.Column(db.String, nullable=True)
-    """
     userid = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    #spotifyid = db.Column(db.String, db.ForeignKey('user.spotify_id'), nullable=False)
-    playlists = db.relationship('Playlist', cascade='delete')
-    profiles = db.relationship('Profile', cascade='delete')
-    artists = db.relationship('Artist', cascade='delete')
-    tracks = db.relationship('Track', cascade='delete')
+    user_top_tracks_short = db.Column(db.String, nullable=False)
+    user_top_tracks_mid = db.Column(db.String, nullable=False)
+    user_top_tracks_long = db.Column(db.String, nullable=False)
+    user_top_artists_short = db.Column(db.String, nullable=False)
+    user_top_artists_mid = db.Column(db.String, nullable=False)
+    user_top_artists_long = db.Column(db.String, nullable=False)
+    user_profile = db.Column(db.String, nullable=False)
+    user_playlists = db.Column(db.String, nullable=False)
+
+    def __init__(self, **kwargs):
+        self.user_top_artists_short = kwargs.get('user_top_artists_short', '')
+        self.user_top_artists_mid = kwargs.get('user_top_artists_mid', '')
+        self.user_top_artists_long = kwargs.get('user_top_artists_long', '')
+        self.user_top_tracks_short = kwargs.get('user_top_tracks_short', '')
+        self.user_top_tracks_mid = kwargs.get('user_top_tracks_mid', '')
+        self.user_top_tracks_long = kwargs.get('user_top_tracks_long', '')
+        self.user_profile = kwargs.get('user_profile', '')
+        self.user_playlists = kwargs.get('user_playlists', '')
+    
+    def serialize(self):
+        return {
+            'user_top_artists_short' : self.user_top_artists_short,
+            'user_top_artists_mid' : self.user_top_artists_mid,
+            'user_top_artists_long' : self.user_top_artists_long,
+            'user_top_tracks_short' : self.user_top_tracks_short,
+            'user_top_tracks_mid' : self.user_top_tracks_mid,
+            'user_top_tracks_long' : self.user_top_tracks_long,
+            'user_profile' : self.user_profile,
+            'user_playlists': self.user_playlists
+        }
 
     
-
-    def __init__(self, **kwargs):
-        """
-        self.userprof = kwargs.get('user_profile', '')
-        self.userplay = kwargs.get('user_playlists', '')
-        self.userfavartist = kwargs.get('user_favorite_artists', '')
-        self.userfavtrack = kwargs.get('user_favorite_tracks', '')
-        """
-        self.userid = kwargs.get('userid', '')
-    
-
-    def serialize(self):
-        return {
-            """
-            'user profile': self.userprof,
-            'user playlists': self.userplay,
-            'user favorite artists': self.userfavartist,
-            'user favorite tracks': self.userfavtrack
-            """
-            'userdataid': self.id,
-            'userid': self.userid,
-            #'spotifyid': self.spotifyid
-        }
-
-class Playlist(db.Model):
-    __tablename__ = 'playlists'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=True)
-    images = db.Column(db.String, nullable=True)
-    dataid = db.Column(db.Integer, db.ForeignKey('datas.id'), nullable=False)
-
-    def __init__(self, **kwargs):
-        self.name = kwargs.get('name', '')
-        self.images = kwargs.get('images', '')
-        self.dataid = kwargs.get('dataid')
-
-
-    def serialize(self):
-        return {
-            'playlist id': self.id,
-            'user playlists': self.userplay,
-            'playlist image': self.images[0],
-            'data id': self.dataid
-        }
-    
-class Profile(db.Model):
-    __tablename__ = 'profiles'
-    id = db.Column(db.Integer, primary_key=True)
-    #userprof = db.Column(db.String, nullable=True)
-    display_name = db.Column(db.String, nullable=True)
-    images = db.Column(db.String, nullable=True)
-    dataid = db.Column(db.Integer, db.ForeignKey('datas.id'), nullable=False)
-
-    def __init__(self, **kwargs):
-        self.userprof = kwargs.get('user_profile', '')
-        self.display_name = kwargs.get('user_name', '')
-        self.images = kwargs.get('user_images', '')
-        self.dataid = kwargs.get('dataid')
-
-    def serialize(self):
-        return {
-            'user id': self.id,
-            'user name': self.display_name,
-            'user image': self.images[0],
-            'data id': self.dataid
-        }
-
-class Artist(db.Model):
-    __tablename__ = 'artists'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=True)
-    images = db.Column(db.String, nullable=True)
-    genres = db.Column(db.String, nullable=True)
-    dataid = db.Column(db.Integer, db.ForeignKey('datas.id'), nullable=False)
-
-    def __init__(self, **kwargs):
-        self.name = kwargs.get('artist_name', '')
-        self.images = kwargs.get('artist_images', '')
-        self.genres = kwargs.get('artist_genres', '')
-        self.popularity = kwargs.get('artist_popularities', '')
-        self.followers = kwargs.get('artist_followers', '')
-        self.profile_url = kwargs.get('artist_url', '')
-        self.dataid = kwargs.get('dataid', '')
-
-    def serialize(self):
-        return {
-            'artist id': self.id,
-            'artist name': self.name,
-            'artist image': self.images[0],
-            'artist genre': self.genres[0],
-            'data id': self.dataid
-        }
-
-class Track(db.Model):
-    __tablename__ = 'tracks'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=True)
-    url = db.Column(db.String, nullable=True)
-    dataid = db.Column(db.Integer, db.ForeignKey('datas.id'), nullable=False)
-
-    def __init__(self, **kwargs):
-        self.name = kwargs.get('track name', '')
-        self.url = kwargs.get('track url', '')
-        self.dataid = kwargs.get('dataid')
-        
-
-    def serialize(self):
-        return {
-            'track id': self.id,
-            'track name': self.name,
-            'track url': self.url,
-            'data id': self.dataid
-        }
-
-
-
