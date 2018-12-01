@@ -17,8 +17,8 @@ app.config['SQLALCHEMY_ECHO'] = True
 
 db.init_app(app)
 
-CLIENT_SIDE_URL = "http://127.0.0.1"
-PORT = 8080
+CLIENT_HOST = '0.0.0.0'
+PORT = 5000
 
 @app.route('/')
 

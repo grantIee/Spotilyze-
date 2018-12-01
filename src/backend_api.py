@@ -29,8 +29,8 @@ SPOTIFY_API_BASE_URL = "https://api.spotify.com"
 SPOTIFY_API_URL = "https://api.spotify.com/v1"
 
 # Server-side Parameters
-CLIENT_SIDE_URL = "http://127.0.0.1"
-PORT = 8080
+CLIENT_HOST = '0.0.0.0'
+PORT = 5000
 REDIRECT_URI = "{}:{}/callback/q".format(CLIENT_SIDE_URL, PORT)
 SCOPE = "user-follow-read user-top-read user-read-private playlist-read-collaborative"
 SHOW_DIALOG_bool = True
