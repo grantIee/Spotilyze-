@@ -1,6 +1,6 @@
 '''
     api.py
-    Grant Lee & Richard Yoon
+    Grant Lee & Jaemok Yoon
 
     Code that retrieves information on authenticated Spotify User
 '''
@@ -11,13 +11,9 @@ import base64
 import urllib
 from urllib.parse import quote
 import json
-<<<<<<< HEAD
 from db2 import db, User, Data
 import time
 import datetime
-=======
-from db import db, User, Data, Playlist, Track, Artist, Profile
->>>>>>> 569692591f23bf16ec4577bef3f420fe2761ad5d
 
 db_filename = "data.db"
 app = Flask(__name__)

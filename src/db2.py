@@ -1,6 +1,6 @@
 '''
     db2.py
-    Grant Lee & Richard Yoon
+    Grant Lee & Jaemok Yoon
 
     Database structure for Spotilyze API
 '''
