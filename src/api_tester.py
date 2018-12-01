@@ -11,13 +11,9 @@ import base64
 import urllib
 from urllib.parse import quote
 import json
-<<<<<<< HEAD
 from db2 import db, User, Data
 import time
 import datetime
-=======
-from db import db, User, Data, Playlist, Track, Artist, Profile
->>>>>>> 569692591f23bf16ec4577bef3f420fe2761ad5d
 
 db_filename = "data.db"
 app = Flask(__name__)
@@ -25,10 +21,6 @@ app = Flask(__name__)
 #  Client Key (Be sure to leave these out)
 CLIENT_ID = 'a9c19b55cef14742aba314f3d27ae7d5'
 CLIENT_SECRET = '46a536eb74a14a3b94b70650d02a2db4'
-<<<<<<< HEAD
-
-=======
->>>>>>> 6c840d647f9357cc809837f8c6442081b446aa87
 
 # Spotify URLS (Request url materials)
 SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
@@ -112,14 +104,9 @@ def callback():
     # Check that user is already in the system or not
     if user is not None:
         # Check that the last time it was refreshed was within 1 week
-<<<<<<< HEAD
-        print("YOLO")
-        # If not in the db, make a new entry
-=======
         last_refreshed_date = user.date_last_refreshed
         if datetime_current - last_refreshed_date < datetime.timedelta(days=7):
             return json.dumps({'success': False, 'error': 'user has been refreshed within the past week'}), 429
->>>>>>> 6c840d647f9357cc809837f8c6442081b446aa87
     else:
         # If not in the db, make a new entry
         user_entry = User (
@@ -129,66 +116,6 @@ def callback():
         db.session.add(user_entry)
         db.session.commit()
 
-<<<<<<< HEAD
-    # Retrieve Playlist Data
-    playlist_api_endpoint = "{}/playlists".format(profile_data["href"])
-    playlists_response = requests.get(playlist_api_endpoint, headers=authorization_header)
-    playlist_data = json.loads(playlists_response.text)
-    ndata = playlist_data.get('items')
-    idata = playlist_data.get('items')
-    ddata = playlist_data.get('items')
-    if ndata != []:
-        ndata = ndata[0].get('name')
-        idata = idata[0].get('images')
-        ddata = user.id
-    else:
-        ndata = "User has no data"
-        idata = "user has no data"
-        ddata = -1
-
-
-    pdata = Playlist(
-        name = ndata,
-        images = idata,
-        dataid = ddata
-    )
-    if ddata != -1:
-        user.datas.playlists.append(pdata)
-        db.session.add(pdata)
-    db.session.commit()
-
-    # Retrieve Favorite Tracks
-    favorite_tracks_api_endpoint = "{}/me/top/{}?time_range=medium_term".format(SPOTIFY_API_URL, "tracks")
-    favorite_tracks_response = requests.get(favorite_tracks_api_endpoint, headers=authorization_header)
-    favorite_tracks_data = json.loads(favorite_tracks_response.text)
-    #print(favorite_tracks_data)
-    ndata =  favorite_tracks_data.get('items')[0].get('album')
-    idata = favorite_tracks_data.get('items')[0].get('album')
-    ddata = playlist_data.get('items')
-    if ndata != []:
-        ndata = ndata.get('name')
-        idata = idata.get('url')
-        ddata = user.id
-    else:
-        ndata = "User has no data"
-        idata = "user has no data"
-        ddata = -1
-
-
-    favtrackdata = Track(
-        name = ndata,
-        url = idata,
-        dataid = ddata
-    )
-
-    if ddata != -1:
-        #user.tracks.append(favtrackdata)
-        user.datas.
-        get("favorite_tracks_data").get("items").add(favtarckdata)
-        print(user.datas)
-        db.session.add(favtrackdata)
-    db.session.commit()
-=======
     # User should now be defined either way
     user = User.query.filter_by(spotify_id = spotify_id).first()
 
@@ -237,7 +164,6 @@ def callback():
         user_profile = str(user_profile_data),
         user_playlists = str(user_playlists_data)
     )
->>>>>>> 6c840d647f9357cc809837f8c6442081b446aa87
 
     user.user_data.clear()
     user.user_data.append(user_data_entry)

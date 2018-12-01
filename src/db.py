@@ -57,10 +57,7 @@ class Data(db.Model):
     userfavtrack = db.Column(db.String, nullable=True)
     """
     userid = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-<<<<<<< HEAD
-=======
     #spotifyid = db.Column(db.String, db.ForeignKey('user.spotify_id'), nullable=False)
->>>>>>> 569692591f23bf16ec4577bef3f420fe2761ad5d
     playlists = db.relationship('Playlist', cascade='delete')
     profiles = db.relationship('Profile', cascade='delete')
     artists = db.relationship('Artist', cascade='delete')
@@ -140,14 +137,7 @@ class Artist(db.Model):
     name = db.Column(db.String, nullable=True)
     images = db.Column(db.String, nullable=True)
     genres = db.Column(db.String, nullable=True)
-<<<<<<< HEAD
-    popularity = db.Column(db.Integer, nullable=True)
-    followers = db.Column(db.Integer, nullable=True)
-    profile_url = db.Column(db.String, nullable=True)
-    dataid = db.Column(db.Integer, db.ForeignKey('datas.userid'), nullable=False)
-=======
     dataid = db.Column(db.Integer, db.ForeignKey('datas.id'), nullable=False)
->>>>>>> 569692591f23bf16ec4577bef3f420fe2761ad5d
 
     def __init__(self, **kwargs):
         self.name = kwargs.get('artist_name', '')
